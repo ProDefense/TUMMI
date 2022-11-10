@@ -41,16 +41,42 @@ def open_file():
         name = os.path.splitext(file_name)[0]
         pack = "UNPACKED"
         hash = "HASH"
-        file2 = open(f'{pack}-{name}.exe', "x")
-        file2 = open(f'{hash}-{name}.txt', "x")
 
         # Code for unpacking and writing to the file
+        # Figure out which unpacker to call based on any signatures left in the file
+        content = file.read()
+        packerFound = False
+        packer = "Not Found"
 
-        base = True
-        success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
-        success.grid(columnspan=5,row=3)
-        browser_text.set("Browse")
-        return
+        # 1. UPX:
+        findUPX = content.find(b'$Info: This file is packed with the UPX executable packer http://upx.sf.net $')
+        if findUPX > -1:
+            # UPX was used to pack this file. 
+            packerFound = True
+            packer = "UPX"
+
+            # Call UPX unpacker here.
+
+        elif findUPX == -1:
+            # UPX was not used to pack this file. Try looking for another packer's signature.
+            packerFound = False
+
+
+        # Done finding packer and running unpacker. Give unpacked file and hash data, unless no packer was identified.           
+        if packerFound == True:
+            file2 = open(f'{pack}-{name}.exe', "x")
+            file2 = open(f'{hash}-{name}.txt', "x")
+            base = True
+            success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
+            success.grid(columnspan=5,row=3)
+            browser_text.set("Browse")
+            return
+        elif packerFound == False:
+            base = True
+            success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
+            success.grid(columnspan=5,row=3)
+            browser_text.set("Browse")
+
 
 
 #browser button
@@ -62,4 +88,3 @@ canvas = tk.Canvas(root, width=1000,height=200)
 canvas.grid(columnspan=3)
 
 root.mainloop()
-
