@@ -18,20 +18,30 @@ Here is a compiled list of our resources that we used to make TUMMI!
 
 ## Articles 
 
-### Unpacking / Malware Analysis
+[Our own research](https://docs.google.com/document/d/13KUmOD5G9e5Lxjr-lYJ7v-9vnlRlKyWUg1TK6otsgUc/edit)
 
-- [Our own research](https://docs.google.com/document/d/13KUmOD5G9e5Lxjr-lYJ7v-9vnlRlKyWUg1TK6otsgUc/edit)
+### Unpacking (General)
+
 - [How to Unpack Malware: Personal Notes](https://marcoramilli.com/2020/10/09/how-to-unpack-malware-personal-notes/)
 - [Unpacking 101: Writing a Static Unpacker](https://www.gdatasoftware.com/blog/2019/01/31413-unpack-lpdinch-malware)
-- [Systemic Approach to Malware Analysis (SAMA)](https://www.mdpi.com/2076-3417/10/4/1360)
 - [Unpacking Packed Malware](https://www.darkreading.com/abtv/unpacking-packed-malware/a/d-id/735728)
+- [Unpacking, Reversing, Patching](https://resources.infosecinstitute.com/topic/unpacking-reversing-patching/)
+- [PEiD](https://www.aldeid.com/wiki/PEiD)
+
+### Unpacking (UPX)
 - [Manually Unpacking UPX Executables](https://malware.news/t/the-basics-of-packed-malware-manually-unpacking-upx-executables/35961)
 - [How To Unpack UPX-Packed Malware With A Single Breakpoint](https://infosecwriteups.com/how-to-unpack-upx-packed-malware-with-a-single-breakpoint-4d3a23e21332)
+- [Unpacking UPX with PEPyEmu](https://www.pythonstudio.us/reverse-engineering/unpacking-upx-with-pepyemu.html)
 
-### Stack Exchange
+### Malware Analysis
+
+- [Systemic Approach to Malware Analysis (SAMA)](https://www.mdpi.com/2076-3417/10/4/1360)
+- [5 Open-Source Malware Analysis Tools](https://www.cyberbit.com/endpoint-security/open-source-malware-analysis-tools/)
+- [Linux Reverse Engineering Tools](https://reverseengineering.stackexchange.com/questions/6922/what-is-the-linux-equivalent-to-ollydbg-and-ida-pro)
+
+### Executable Formats
 
 - [How to check if an ELF file is UPX packed](https://reverseengineering.stackexchange.com/questions/168/how-to-check-if-an-elf-file-is-upx-packed)
-- [Linux Reverse Engineering Tools](https://reverseengineering.stackexchange.com/questions/6922/what-is-the-linux-equivalent-to-ollydbg-and-ida-pro)
 
 ## Videos
 
