@@ -12,7 +12,7 @@ Here is a compiled list of our resources that we used to make TUMMI!
 - [unpacker.py](https://github.com/malwaremusings/unpacker/blob/master/unpack.py)
 - [Ldpinch Unpacker](https://github.com/GDATASoftwareAG/LdpinchUnpacker)
 
-### Misc
+### Deobfuscation
 
 - [Ox4Shell](https://github.com/ox-eye/Ox4Shell)
 
