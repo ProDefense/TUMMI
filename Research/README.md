@@ -43,6 +43,10 @@ Here is a compiled list of our resources that we used to make TUMMI!
 
 - [How to check if an ELF file is UPX packed](https://reverseengineering.stackexchange.com/questions/168/how-to-check-if-an-elf-file-is-upx-packed)
 
+### Development
+
+- [What is a CI/CD pipeline?](https://www.redhat.com/en/topics/devops/what-cicd-pipeline)
+
 ## Videos
 
 ### Sandboxes
