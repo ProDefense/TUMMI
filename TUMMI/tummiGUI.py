@@ -7,6 +7,10 @@ import os
 from PIL import ImageTk, Image
 from tkinter.filedialog import askopenfile
 
+from traitlets import All
+
+import hashlib
+
 #must enter this command in cmd
 # pip install Pillow
 base = False
@@ -66,6 +70,13 @@ def open_file():
         if packerFound == True:
             file2 = open(f'{pack}-{name}.exe', "x")
             file2 = open(f'{hash}-{name}.txt', "x")
+
+            with open(file, "rb") as f:
+                AllBytes = f.read()
+
+
+            hashContents = hashlib.md5(AllBytes).hexdigest()
+            file2.write(hashContents)
             base = True
             success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
             success.grid(columnspan=5,row=3)
