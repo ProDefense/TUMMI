@@ -4,6 +4,7 @@ from tkinter import filedialog
 import tkinter as tk
 import os
 
+from pathlib import Path
 from PIL import ImageTk, Image
 from tkinter.filedialog import askopenfile
 
@@ -69,14 +70,12 @@ def open_file():
         # Done finding packer and running unpacker. Give unpacked file and hash data, unless no packer was identified.           
         if packerFound == True:
             file2 = open(f'{pack}-{name}.exe', "x")
-            file2 = open(f'{hash}-{name}.txt', "x")
-
-            with open(file, "rb") as f:
-                AllBytes = f.read()
-
+            file3 = open(f'{hash}-{name}.txt', "x")
+           
+            AllBytes = file.read()
 
             hashContents = hashlib.md5(AllBytes).hexdigest()
-            file2.write(hashContents)
+            file3.write(hashContents)
             base = True
             success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
             success.grid(columnspan=5,row=3)
