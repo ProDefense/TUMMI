@@ -12,26 +12,30 @@ from traitlets import All
 
 import hashlib
 
-#must enter this command in cmd
+# must enter this command in cmd
 # pip install Pillow
 base = False
 root = tk.Tk()
 
-canvas = tk.Canvas(root, width=1000,height=400)
-canvas.grid(columnspan=3,rowspan=3)
+canvas = tk.Canvas(root, width=1000, height=400)
+canvas.grid(columnspan=3, rowspan=7)
 
-#logo
+# logo
 logo = Image.open('banner2.png')
-resize_image = logo.resize((1000,300))
+resize_image = logo.resize((1000, 300))
 img = ImageTk.PhotoImage(resize_image)
 
 logo_label = tk.Label(image=img)
 logo_label.image = img
-logo_label.grid(column=1,row=0)
+logo_label.grid(column=1, row=0)
 
 # instructions
 instructions = tk.Label(root, text="Select an executable on your computer to analyze", font="Raleway")
-instructions.grid(columnspan=3,row=1)
+instructions.grid(columnspan=3, row=1)
+
+def filesize(fileobj):
+    fileobj.seek(0, os.SEEK_END)    # read from beginning to end
+    return fileobj.tell()  
 
 def open_file():
     global success
@@ -40,7 +44,7 @@ def open_file():
         success.grid_forget()
 
     browser_text.set("loading...")
-    file = filedialog.askopenfile(parent=root,mode='rb',title="Choose a file", filetype=[("Exe file", "*.exe")])
+    file = filedialog.askopenfile(parent=root, mode='rb', title="Choose a file", filetype=[("Exe file", "*.exe")])
     if file:
         file_name = os.path.basename(file.name)
         name = os.path.splitext(file_name)[0]
@@ -66,35 +70,49 @@ def open_file():
             # UPX was not used to pack this file. Try looking for another packer's signature.
             packerFound = False
 
-
         # Done finding packer and running unpacker. Give unpacked file and hash data, unless no packer was identified.           
         if packerFound == True:
             file2 = open(f'{pack}-{name}.exe', "x")
             file3 = open(f'{hash}-{name}.txt', "x")
-           
+
             AllBytes = file.read()
 
             hashContents = hashlib.md5(AllBytes).hexdigest()
             file3.write(hashContents)
+
             base = True
-            success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
-            success.grid(columnspan=5,row=3)
+            success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory",
+                               font="Raleway")
+            success.grid(columnspan=3, row=4)
             browser_text.set("Browse")
-            return
-        elif packerFound == False:
-            base = True
-            success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
-            success.grid(columnspan=5,row=3)
-            browser_text.set("Browse")
+            size_of_file = filesize(file)
+            # theHash = ('nice')
+            theHash = tk.Label(root, text='File MD5 Hash: ' + hashContents, font="Raleway")
+            theHash.grid(columnspan=3, row=5)
+
+            theSize = tk.Label(root, text='File Size: ' + str(size_of_file) + ' bytes ', font="Raleway")
+            theSize.grid(columnspan=3, row=6)
+
+        return
+    elif packerFound == False:
+        base = True
+        success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
+        success.grid(columnspan=3, row=4)
+        browser_text.set("Browse")
 
 
-
-#browser button
+# browser button
 browser_text = tk.StringVar()
-browser_btn = tk.Button(root, textvariable=browser_text, command=lambda:open_file(),font="Raleway", bg="#20bebe", fg="white",height=2,width=15)
-browser_btn.grid(column=1,row=2)
+browser_btn = tk.Button(root, textvariable=browser_text, command=lambda: open_file(), font="Raleway", bg="#20bebe",
+                        fg="white", height=2, width=15)
+browser_btn.grid(column=1, row=2)
 browser_text.set("Browse")
-canvas = tk.Canvas(root, width=1000,height=200)
+canvas = tk.Canvas(root, width=1000, height=200)
 canvas.grid(columnspan=3)
+
+root.grid_rowconfigure(1, minsize=70)
+root.grid_rowconfigure(4, minsize=70)
+root.grid_rowconfigure(5, minsize=70)
+root.grid_rowconfigure(6, minsize=70)
 
 root.mainloop()
