@@ -3,6 +3,7 @@
 from tkinter import filedialog
 import tkinter as tk
 import os
+import subprocess
 
 from pathlib import Path
 from PIL import ImageTk, Image
@@ -47,6 +48,7 @@ def open_file():
     file = filedialog.askopenfile(parent=root, mode='rb', title="Choose a file", filetype=[("Exe file", "*.exe")])
     if file:
         file_name = os.path.basename(file.name)
+        file_path = os.path.abspath(file.name)
         name = os.path.splitext(file_name)[0]
         pack = "UNPACKED"
         hash = "HASH"
@@ -65,6 +67,7 @@ def open_file():
             packer = "UPX"
 
             # Call UPX unpacker here.
+            subprocess.call(['python3','./unpackers/upx/upx_unpacker.py', file_path])
 
         elif findUPX == -1:
             # UPX was not used to pack this file. Try looking for another packer's signature.
