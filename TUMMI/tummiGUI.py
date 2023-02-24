@@ -14,6 +14,7 @@ from PIL import ImageTk, Image
 
 # must enter this command in cmd
 # pip install Pillow
+# pip install yara
 
 # base is for colors base = false means colors are in hex
 base = False
@@ -106,28 +107,31 @@ def open_file():
             source =  '''
             rule upx{
                 strings:
+                    $mz = "MZ"
                     $upx = "upX" wide ascii
                     $upx0 = "UPX0" wide ascii
                     $upx1 = "UPX1" wide ascii
                     $upx2 = "UPX2" wide ascii
                     $upxx = "UPX!" wide ascii
                 condition:
-                    (2 of ($upx0, $upx1, $upx2)) or $upxx or $upx
+                    $mz at 0 and ((2 of ($upx0, $upx1, $upx2)) or $upxx or $upx)
             }
             rule pecompact{
                 strings:
+                    $mz = "MZ"
                     $pec1 = "PE"
                     $pec2 = "PEC2"
                     $pec = "PECompact2"
                 condition:
-                    (($pec1 and $pec2) or $pec)
+                    $mz at 0 and (($pec1 and $pec2) or $pec)
             }
             rule aspack{
                 strings:
+                    $mz = "MZ"
                     $asp = "aspack"
                     $asp1 = "adata"
                 condition:
-                    $asp and $asp1
+                    $mz at 0 and $asp and $asp1
             }'''
 
             rules = yara.compile(source=source)
