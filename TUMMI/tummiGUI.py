@@ -6,6 +6,9 @@ import hashlib
 import subprocess
 import pefile
 
+import sys
+import yara
+
 from tkinter import filedialog
 from PIL import ImageTk, Image
 
@@ -98,8 +101,48 @@ def open_file():
             except pefile.PEFotmatError:
                 print("not a portable executable (pe) file type")
 
+        #testing yara functionalities
+        def which_packer(file_path):
+            source =  '''
+            rule upx{
+                strings:
+                    $upx = "upX" wide ascii
+                    $upx0 = "UPX0" wide ascii
+                    $upx1 = "UPX1" wide ascii
+                    $upx2 = "UPX2" wide ascii
+                    $upxx = "UPX!" wide ascii
+                condition:
+                    (2 of ($upx0, $upx1, $upx2)) or $upxx or $upx
+            }
+            rule pecompact{
+                strings:
+                    $pec1 = "PE"
+                    $pec2 = "PEC2"
+                    $pec = "PECompact2"
+                condition:
+                    (($pec1 and $pec2) or $pec)
+            }
+            rule aspack{
+                strings:
+                    $asp = "aspack"
+                    $asp1 = "adata"
+                condition:
+                    $asp and $asp1
+            }'''
+
+            rules = yara.compile(source=source)
+            matches = rules.match(file_path)
+            if "upx" in str(matches):
+                return "upx"
+            elif "pecompact" in str(matches):
+                return "pecompact"
+            elif "aspack" in str(matches):
+                return "aspack"
+            else:
+                return "could not find packer"
+
         # Done finding packer and running unpacker. Give unpacked file and hash data, unless no packer was identified.
-        if is_upx_packed(file_path) == True:
+        if which_packer(file_path) == "upx":
             #file2 = open(f'{pack_str}-{name}.exe', "w")
             file3 = open(f'{hash_str}-{name}.txt', "w")
             
