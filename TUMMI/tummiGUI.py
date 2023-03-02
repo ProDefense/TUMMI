@@ -184,22 +184,32 @@ def open_file():
             browser_text.set("Browse")
 
             return
+        
         #temporary placeholders before more unpacker implementations
         elif which_packer(file_path) == "pecompact":
             success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
             packerType.configure(text="Your file was packed with: PECompact")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
             browser_text.set("Browse")
             return
+        
         elif which_packer(file_path) == "aspack":
             success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
             packerType.configure(text="Your file was packed with: ASPack")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
             browser_text.set("Browse")
             return
+        
         elif which_packer(file_path) == "mpress":
             success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
             packerType.configure(text="Your file was packed with: MPRESS")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
             browser_text.set("Browse")
             return
+        
         else:
             base = True
             success.configure(text="Sorry, we could not identify how this file was packed.")
