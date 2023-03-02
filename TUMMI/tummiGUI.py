@@ -81,11 +81,14 @@ def open_file():
         
         success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
         success.grid(columnspan=3, row=4)
+        packerType = tk.Label(root, text=' ', font="Raleway")
+        packerType.grid(columnspan=3, row=5)
         theHash = tk.Label(root, text=' ' , font="Raleway")
-        theHash.grid(columnspan=3, row=5)
+        theHash.grid(columnspan=3, row=6)
         theSize = tk.Label(root, text=' ', font="Raleway")
-        theSize.grid(columnspan=3, row=6)
+        theSize.grid(columnspan=3, row=7)
         success.configure(text="            ")
+        packerType.configure(text="            ")
         theHash.configure(text="            ")
         theSize.configure(text="            ")
         #success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
@@ -102,8 +105,9 @@ def open_file():
             except pefile.PEFotmatError:
                 print("not a portable executable (pe) file type")
 
-        #testing yara functionalities
+        #determine which packer was used
         def which_packer(file_path):
+            #yara rules
             source =  '''
             rule upx{
                 strings:
@@ -128,10 +132,18 @@ def open_file():
             rule aspack{
                 strings:
                     $mz = "MZ"
-                    $asp = "aspack"
-                    $asp1 = "adata"
+                    $asp = ".aspack"
+                    $asp1 = ".adata"
                 condition:
-                    $mz at 0 and $asp and $asp1
+                    $mz at 0 and ($asp or $asp1)
+            }
+            rule mpress{
+                strings:
+                    $mz = "MZ"
+                    $mp1 = ".MPRESS1"
+                    $mp2 = ".MPRESS2"
+                condition:
+                    $mz at 0 and ($mp1 or $mp2)
             }'''
 
             rules = yara.compile(source=source)
@@ -142,6 +154,8 @@ def open_file():
                 return "pecompact"
             elif "aspack" in str(matches):
                 return "aspack"
+            elif "mpress" in str(matches):
+                return "mpress"
             else:
                 return "could not find packer"
 
@@ -162,11 +176,29 @@ def open_file():
             
             size_of_file = filesize(selected_file)
             
+            packerType.configure(text="Your file was packed with: UPX")
+
             theHash.configure(text='    File MD5 Hash: ' + hashContents + '    ' )
             
             theSize.configure(text='    File Size: ' + str(size_of_file) + ' bytes    ')
             browser_text.set("Browse")
 
+            return
+        #temporary placeholders before more unpacker implementations
+        elif which_packer(file_path) == "pecompact":
+            success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
+            packerType.configure(text="Your file was packed with: PECompact")
+            browser_text.set("Browse")
+            return
+        elif which_packer(file_path) == "aspack":
+            success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
+            packerType.configure(text="Your file was packed with: ASPack")
+            browser_text.set("Browse")
+            return
+        elif which_packer(file_path) == "mpress":
+            success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
+            packerType.configure(text="Your file was packed with: MPRESS")
+            browser_text.set("Browse")
             return
         else:
             base = True
