@@ -19,7 +19,7 @@ root = tk.Tk()
 
 # set the size of the GUI
 canvas = tk.Canvas(root, width=1000, height=400)
-canvas.grid(columnspan=3, rowspan=7)
+canvas.grid(columnspan=3, rowspan=8)
 
 # set the banner
 logo = Image.open('banner2.png')
@@ -78,12 +78,15 @@ def open_file():
         success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
         success.grid(columnspan=3, row=4)
         theHash = tk.Label(root, text=' ' , font="Raleway")
-        theHash.grid(columnspan=3, row=5)
+        theHash.grid(columnspan=3, row=6)
         theSize = tk.Label(root, text=' ', font="Raleway")
-        theSize.grid(columnspan=3, row=6)
+        theSize.grid(columnspan=3, row=7)
+        theName = tk.Label(root, text=' ', font="Raleway")
+        theName.grid(columnspan=3, row=5)
         success.configure(text="            ")
         theHash.configure(text="            ")
         theSize.configure(text="            ")
+        theName.configure(text="            ")
         #success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
         #success.grid(columnspan=3, row=4)
         # 1. UPX:
@@ -118,6 +121,8 @@ def open_file():
             theHash.configure(text='    File MD5 Hash: ' + hashContents + '    ' )
             
             theSize.configure(text='    File Size: ' + str(size_of_file) + ' bytes    ')
+            
+            theName.configure(text='        Selected File : ' + selected_file.name + '        ' )
             browser_text.set("Browse")
 
             return
@@ -127,6 +132,7 @@ def open_file():
 
             theHash.configure(text='                                                                                             ')
             theSize.configure(text='                                                                ')
+            theName.configure(text='                                                                                                                            ')
             browser_text.set("Browse")
             
             return
@@ -144,5 +150,6 @@ root.grid_rowconfigure(1, minsize=70)
 root.grid_rowconfigure(4, minsize=70)
 root.grid_rowconfigure(5, minsize=70)
 root.grid_rowconfigure(6, minsize=70)
+root.grid_rowconfigure(7, minsize=70)
 
 root.mainloop()
