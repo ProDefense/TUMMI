@@ -6,7 +6,8 @@ The motivation behind The TUMMI Project project is to build a set of multiple un
 ## Installation:
 
 To install the TUMMI Software, simply run
-```git clone https://github.com/ProDefense/TUMMI/
+```
+git clone https://github.com/ProDefense/TUMMI/
 cd TUMMI
 pip3 install -r requirements.txt
 ```
@@ -14,11 +15,9 @@ pip3 install -r requirements.txt
 ## Running the Program:
 
 Once inside the TUMMI folder, there are two ways to execute TUMMI. For most users, one can simply run
-
 ```python3 tummiGUI.py```
 
 This can be shorted by running `chmod +x tummiGUI.py` on the file. From there, simply typing
-
 ```./tummiGUI.py```
 
 should work. On windows, typing `.\tummiGUI.py` is equivalent.
