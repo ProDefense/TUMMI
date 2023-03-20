@@ -15,12 +15,11 @@ pip3 install -r requirements.txt
 ## Running the Program:
 
 Once inside the TUMMI folder, there are two ways to execute TUMMI. For most users, one can simply run
-```python3 tummiGUI.py```
+```
+python3 tummiGUI.py
+```
 
-This can be shorted by running `chmod +x tummiGUI.py` on the file. From there, simply typing
-```./tummiGUI.py```
-
-should work. On windows, typing `.\tummiGUI.py` is equivalent.
+This can be shorted by running `chmod +x tummiGUI.py` on the file. From there, simply typing `./tummiGUI.py` should work. On Windows, typing `.\tummiGUI.py` is equivalent.
 
 Next, select whichever executable to be automatically unpacked and have hash values saved to a text document in the same folder.
 *Note:* this currently only works for files packed with UPX, we are in the process of expanding this list!
