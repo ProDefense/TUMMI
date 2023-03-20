@@ -8,7 +8,8 @@ The motivation behind The TUMMI Project project is to build a set of multiple un
 To install the TUMMI Software, simply run
 ```git clone https://github.com/ProDefense/TUMMI/
 cd TUMMI
-pip3 install -r requirements.txt```
+pip3 install -r requirements.txt
+```
 
 ## Running the Program:
 
