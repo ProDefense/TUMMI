@@ -56,7 +56,6 @@ def change_permissions(selected):
     os.chmod(selected, new_permissions)
 
 
-
 def open_file():
     global success
     global base
@@ -156,8 +155,9 @@ def open_file():
                 strings:
                     $mz = "MZ"
                     $pet1 = ".petite"
+                    $pet2 = "petite"
                 condition:
-                    $mz at 0 and $pet1
+                    $mz at 0 and ($pet1 or $pet2)
             }'''
 
             rules = yara.compile(source=source)
