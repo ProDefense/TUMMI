@@ -238,7 +238,7 @@ def open_file():
         
         elif which_packer(file_path) == "petite":
             success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
-            packerType.configure(text="Your file was packed with: petite")
+            packerType.configure(text="Your file was packed with: PEtite")
             theHash.configure(text='                                                                                             ')
             theSize.configure(text='                                                                ')
             browser_text.set("Browse")
