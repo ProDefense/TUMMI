@@ -144,6 +144,20 @@ def open_file():
                     $mp2 = ".MPRESS2"
                 condition:
                     $mz at 0 and ($mp1 or $mp2)
+            }
+            rule mew{
+                strings:
+                    $mz = "MZ"
+                    $mew1 = "MEW"
+                condition:
+                    $mz at 0 and $mew1
+            }
+            rule petite{
+                strings:
+                    $mz = "MZ"
+                    $pet1 = ".petite"
+                condition:
+                    $mz at 0 and $pet1
             }'''
 
             rules = yara.compile(source=source)
@@ -156,6 +170,10 @@ def open_file():
                 return "aspack"
             elif "mpress" in str(matches):
                 return "mpress"
+            elif "mew" in str(matches):
+                return "mew"
+            elif "petite" in str(matches):
+                return "petite"
             else:
                 return "could not find packer"
 
@@ -205,6 +223,22 @@ def open_file():
         elif which_packer(file_path) == "mpress":
             success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
             packerType.configure(text="Your file was packed with: MPRESS")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "mew":
+            success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
+            packerType.configure(text="Your file was packed with: MEW")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "petite":
+            success.configure(text="Sorry, we do not have an unpacker implemented for this file yet.")
+            packerType.configure(text="Your file was packed with: petite")
             theHash.configure(text='                                                                                             ')
             theSize.configure(text='                                                                ')
             browser_text.set("Browse")
