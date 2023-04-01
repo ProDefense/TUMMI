@@ -6,6 +6,9 @@ import hashlib
 import subprocess
 import pefile
 
+import sys
+import yara
+
 from tkinter import filedialog
 from PIL import ImageTk, Image
 
@@ -18,7 +21,7 @@ base = False
 root = tk.Tk()
 
 # set the size of the GUI
-canvas = tk.Canvas(root, width=1000, height=400)
+canvas = tk.Canvas(root, width=1000, height=320)
 canvas.grid(columnspan=3, rowspan=8)
 
 # set the banner
@@ -76,17 +79,22 @@ def open_file():
         packer = "Not Found"
         
         success = tk.Label(root, text="Your unpacked file and hash data has been added to your directory", font="Raleway")
-        success.grid(columnspan=3, row=4)
+        success.grid(columnspan=3, row=3)
         theHash = tk.Label(root, text=' ' , font="Raleway")
         theHash.grid(columnspan=3, row=6)
         theSize = tk.Label(root, text=' ', font="Raleway")
         theSize.grid(columnspan=3, row=7)
         theName = tk.Label(root, text=' ', font="Raleway")
         theName.grid(columnspan=3, row=5)
+       
         success.configure(text="            ")
         theHash.configure(text="            ")
         theSize.configure(text="            ")
         theName.configure(text="            ")
+        
+        packerType = tk.Label(root, text=' ', font="Raleway")
+        packerType.grid(columnspan=3, row=4)
+        packerType.configure(text="            ")
         #success = tk.Label(root, text="Sorry, we could not identify how this file was packed.", font="Raleway")
         #success.grid(columnspan=3, row=4)
         # 1. UPX:
@@ -101,10 +109,98 @@ def open_file():
             except pefile.PEFotmatError:
                 print("not a portable executable (pe) file type")
 
+        #determine which packer was used
+        def which_packer(file_path):
+            #yara rules
+            source =  '''
+            rule upx{
+                strings:
+                    $mz = "MZ"
+                    $upx = "upX" wide ascii
+                    $upx0 = "UPX0" wide ascii
+                    $upx1 = "UPX1" wide ascii
+                    $upx2 = "UPX2" wide ascii
+                    $upxx = "UPX!" wide ascii
+                condition:
+                    $mz at 0 and ((2 of ($upx0, $upx1, $upx2)) or $upxx or $upx)
+            }
+            rule pecompact{
+                strings:
+                    $mz = "MZ"
+                    $pec1 = "PE"
+                    $pec2 = "PEC2"
+                    $pec = "PECompact2"
+                condition:
+                    $mz at 0 and (($pec1 and $pec2) or $pec)
+            }
+            rule aspack{
+                strings:
+                    $mz = "MZ"
+                    $asp = ".aspack"
+                    $asp1 = ".adata"
+                condition:
+                    $mz at 0 and ($asp or $asp1)
+            }
+            rule mpress{
+                strings:
+                    $mz = "MZ"
+                    $mp1 = ".MPRESS1"
+                    $mp2 = ".MPRESS2"
+                condition:
+                    $mz at 0 and ($mp1 or $mp2)
+            }
+            rule mew{
+                strings:
+                    $mz = "MZ"
+                    $mew1 = "MEW"
+                condition:
+                    $mz at 0 and $mew1
+            }
+            rule petite{
+                strings:
+                    $mz = "MZ"
+                    $pet1 = ".petite"
+                    $pet2 = "petite"
+                condition:
+                    $mz at 0 and ($pet1 or $pet2)
+            }'''
+
+            rules = yara.compile(source=source)
+            matches = rules.match(file_path)
+            if "upx" in str(matches):
+                return "upx"
+            elif "pecompact" in str(matches):
+                return "pecompact"
+            elif "aspack" in str(matches):
+                return "aspack"
+            elif "mpress" in str(matches):
+                return "mpress"
+            elif "mew" in str(matches):
+                return "mew"
+            elif "petite" in str(matches):
+                return "petite"
+            else:
+                return "could not find packer"
+
         # Done finding packer and running unpacker. Give unpacked file and hash data, unless no packer was identified.
-        if is_upx_packed(file_path) == True:
+        if which_packer(file_path) == "upx":
             #file2 = open(f'{pack_str}-{name}.exe', "w")
             file3 = open(f'{hash_str}-{name}.txt', "w")
+            
+            if is_upx_packed(file_path) == True:
+                a =1
+            else:
+                base = True
+                success.configure(text="                   This file has already been unpacked by UPX                   ")
+                theHash.configure(text='                                                                                             ')
+                theSize.configure(text='                                                                ')
+                theName.configure(text='                                                                                                                            ')
+                packerType.configure(text="                                                                                                                     ")
+                browser_text.set("Browse")
+            
+                return
+            
+            
             
             subprocess.call(['python3',upx_unpacker_path, file_path])
 
@@ -118,22 +214,79 @@ def open_file():
             
             size_of_file = filesize(selected_file)
             
+            packerType.configure(text="     Your file was packed with: UPX     ")
+            theName.configure(text='                Selected File : ' + selected_file.name + '                ' )
             theHash.configure(text='    File MD5 Hash: ' + hashContents + '    ' )
             
             theSize.configure(text='    File Size: ' + str(size_of_file) + ' bytes    ')
-            
-            theName.configure(text='        Selected File : ' + selected_file.name + '        ' )
             browser_text.set("Browse")
 
             return
-        else:
-            base = True
-            success.configure(text="Sorry, we could not identify how this file was packed.")
-
+        
+        #temporary placeholders before more unpacker implementations
+        elif which_packer(file_path) == "pecompact":
+            success.configure(text="        Sorry, automatic unpacker for PECompact is still under construction.        ")
+            packerType.configure(text="   Your file was packed with: PECompact   ")
             theHash.configure(text='                                                                                             ')
             theSize.configure(text='                                                                ')
-            theName.configure(text='                                                                                                                            ')
             browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "aspack":
+            success.configure(text="        Sorry, automatic unpacker for PECompact is still under construction.        ")
+            packerType.configure(text="   Your file was packed with: ASPack   ")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "mpress":
+            success.configure(text="        Sorry, automatic unpacker for PECompact is still under construction.        ")
+            packerType.configure(text="   Your file was packed with: MPRESS   ")
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "mew":
+        
+            with open(selected_file.name, 'rb') as f:
+                hashContents = hashlib.md5(f.read()).hexdigest()
+            size_of_file = filesize(selected_file)
+            
+            theName.configure(text='                Selected File : ' + selected_file.name + '                ' )
+            theSize.configure(text='    File Size: ' + str(size_of_file) + ' bytes    ')
+            theHash.configure(text='    File MD5 Hash: ' + hashContents + '    ' )
+            success.configure(text="        Sorry, automatic unpacker for MEW is still under construction.        ")
+            packerType.configure(text="   Your file was packed with: MEW   ")
+            #theHash.configure(text='                                                                                             ')
+            #theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        elif which_packer(file_path) == "petite":
+            with open(selected_file.name, 'rb') as f:
+                hashContents = hashlib.md5(f.read()).hexdigest()
+            size_of_file = filesize(selected_file)
+            
+            theName.configure(text='                Selected File : ' + selected_file.name + '                ' )
+            theSize.configure(text='    File Size: ' + str(size_of_file) + ' bytes    ')
+            theHash.configure(text='    File MD5 Hash: ' + hashContents + '    ' )
+            success.configure(text="        Sorry, automatic unpacker for PEtite is still under construction.        ")
+            packerType.configure(text="   Your file was packed with: PEtite   ")
+            #theHash.configure(text='                                                                                             ')
+            #theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            return
+        
+        else:
+            base = True
+            success.configure(text="          Sorry, we could not identify how this file was packed.          ")
+            theName.configure(text='                                                                                                                                             ')
+            theHash.configure(text='                                                                                             ')
+            theSize.configure(text='                                                                ')
+            browser_text.set("Browse")
+            packerType.configure(text="                                                                               ")
             
             return
 # browser button
@@ -147,6 +300,7 @@ canvas = tk.Canvas(root, width=1000, height=200)
 canvas.grid(columnspan=3)
 
 root.grid_rowconfigure(1, minsize=70)
+root.grid_rowconfigure(3, minsize=70)
 root.grid_rowconfigure(4, minsize=70)
 root.grid_rowconfigure(5, minsize=70)
 root.grid_rowconfigure(6, minsize=70)

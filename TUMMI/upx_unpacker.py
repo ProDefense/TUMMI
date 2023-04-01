@@ -16,7 +16,7 @@ working_directory = os.getcwd()
 # set path to upx_unpacker
 upx_unpacker_path = os.path.join(working_directory, 'upx.exe')
 print(upx_unpacker_path)
-p = subprocess.Popen([upx_unpacker_path, '-d', '-o', str(rand_num) + 'realunpacked.exe', filename])
+p = subprocess.Popen([upx_unpacker_path, '-d', '-o', str(rand_num) + '_UPXunpacked.exe', filename])
 
 # Done unpacking with UPX
 
